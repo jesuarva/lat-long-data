@@ -1,4 +1,4 @@
-import { sunriseSunsetController } from './services'
+import { sunriseSunsetController } from './controllers/sunriseSunsetController'
 import { points } from './data'
 import stats from './stats'
 import { createListOfGeoCoordinates } from './utils'

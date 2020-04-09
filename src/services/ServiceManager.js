@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export function ServiceManager() {
+export default function ServiceManager() {
   let host
   let cachedHeaders
   let kioskManagerAxiosInstance = null
