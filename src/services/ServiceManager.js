@@ -14,6 +14,7 @@ export function ServiceManager() {
         timeout: 2000,
         headers
       })
+      return this
     },
     update(headers) {
       kioskManagerAxiosInstance = axios.create({
@@ -21,6 +22,7 @@ export function ServiceManager() {
         timeout: 2000,
         headers: cachedHeaders || headers
       })
+      return this
     },
     makeRequest(options) {
       const {
