@@ -6,15 +6,18 @@ function Points() {
     length: 0,
     init(listOfPoints) {
       if (points) return
-      points = listOfPoints.reduce((allPoints, { lat, long }) => {
+      points = listOfPoints.reduce((allPoints, [lat, long]) => {
         const point = new Point({ lat, long })
         allPoints[point.id] = point
         return allPoints
       }, {})
       this.length = listOfPoints.length
     },
+    getPoint(pointId) {
+      return points[pointId]
+    },
     setPointProperty(pointId, { key, value }) {
-      points[pointId].update(key, value)
+      points[pointId].setProperty(key, value)
     },
     getPointProperty(pointId, key) {
       return points[pointId]
@@ -35,7 +38,7 @@ class Point {
   getProperty(key) {
     return this.properties[key]
   }
-  update(key, value) {
+  setProperty(key, value) {
     this.properties[key] = value
   }
   delete(key) {
