@@ -1,12 +1,12 @@
 import axios from 'axios'
 
-export function ServiceManagerController() {
+export function ServiceManager() {
   let host
   let cachedHeaders
   let kioskManagerAxiosInstance = null
   let recoveryAttempts = 2
   return {
-    init(uri, headers) {
+    init(uri, headers = {}) {
       host = uri
       cachedHeaders = headers
       kioskManagerAxiosInstance = axios.create({
