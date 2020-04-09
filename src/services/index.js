@@ -73,7 +73,7 @@ export function sunriseSunsetController({ points, stats, latLngList, BATCH_NUMBE
       }
     })
     .map(() => {
-      return new Promise(resolve => setTimeout(resolve, 0))
+      return new Promise(resolve => setTimeout(resolve, 5000))
     })
     .runAsync(() => console.log('sunriseSunset END', stats.get('earliestSunrise')))
 }
