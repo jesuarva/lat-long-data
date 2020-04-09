@@ -1,3 +1,4 @@
+import moment from 'moment'
 import Pipeline from '@jesuarva/js-pipeline'
 import { ServiceManager } from './ServiceManager'
 
@@ -9,12 +10,7 @@ export const SERVICES = {
   }
 }
 
-export function sunriseSunsetController({
-  points,
-  stats,
-  latLngList,
-  BATCH_NUMBER = 1
-}) {
+export function sunriseSunsetController({ points, stats, latLngList, BATCH_NUMBER = 1 }) {
   const { uri, headers, endpoint } = SERVICES['sunriseSunset']
   const service = ServiceManager().init(uri, headers)
   let requestCount = 0
@@ -25,10 +21,7 @@ export function sunriseSunsetController({
       if (requestCount % BATCH_NUMBER === 0) {
         requests.fill(null)
       }
-      if (
-        requests.length === BATCH_NUMBER &&
-        latLngList.length - requestCount < BATCH_NUMBER
-      ) {
+      if (requests.length === BATCH_NUMBER && latLngList.length - requestCount < BATCH_NUMBER) {
         requests.length = latLngList.length - requestCount
       }
     })
@@ -38,15 +31,12 @@ export function sunriseSunsetController({
         request: service.makeRequest({
           method: 'get',
           endpoint,
-          queryParams: { lat, lng }
+          queryParams: { lat, lng, formatted: 0 }
         })
       }
       requestCount++
     })
-    .filter(
-      () =>
-        requestCount % BATCH_NUMBER === 0 || requestCount === latLngList.length
-    )
+    .filter(() => requestCount % BATCH_NUMBER === 0 || requestCount === latLngList.length)
     .map(() => {
       return Promise.all(requests.map(({ request }) => request))
         .then(responses => {
@@ -59,18 +49,36 @@ export function sunriseSunsetController({
     })
     .effect(apiResponses => {
       if (apiResponses) {
-        console.log(apiResponses)
         apiResponses.forEach(([pointId, data]) => {
-          console.log({ pointId, data })
           points.setPointProperty(pointId, {
             key: 'sunriseSunset',
             value: data.results
           })
+          if (stats.get('earliestSunrise')) {
+            const responseSunrise = moment.utc(getTimeForMoment(data.results.sunrise))
+            const earliestSunrise = stats.get('earliestSunrise')
+            console.log('diff', earliestSunrise.diff(responseSunrise))
+            if (earliestSunrise.diff(responseSunrise) > 0) {
+              stats.set('earliestSunrise', responseSunrise)
+            }
+          } else {
+            // console.log('stats 2', moment.utc(getTimeForMoment('11:15:15 PM')))
+            stats.set('earliestSunrise', moment.utc(getTimeForMoment('11:15:15 PM')))
+          }
         })
       }
     })
     .map(() => {
-      return new Promise(resolve => setTimeout(resolve, 5000))
+      return new Promise(resolve => setTimeout(resolve, 0))
     })
-    .runAsync(() => console.log({ points }))
+    .runAsync(() => console.log('sunriseSunset END', stats.get('earliestSunrise')))
+}
+
+function getTimeForMoment(timeString) {
+  const [time, ampm] = timeString.split(' ')
+  let [h, m, s] = time.split(':')
+  if (ampm.toUpperCase() === 'PM') {
+    h = +h + 12
+  }
+  return { hour: h, minute: m, seconds: s }
 }
