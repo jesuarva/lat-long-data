@@ -56,14 +56,19 @@ export function sunriseSunsetController({ points, stats, latLngList, BATCH_NUMBE
           })
           if (stats.get('earliestSunrise')) {
             const responseSunrise = moment.utc(getTimeForMoment(data.results.sunrise))
-            const earliestSunrise = stats.get('earliestSunrise')
+            const { earliestSunrise } = stats.get('earliestSunrise')
             console.log('diff', earliestSunrise.diff(responseSunrise))
             if (earliestSunrise.diff(responseSunrise) > 0) {
-              stats.set('earliestSunrise', responseSunrise)
+              stats.set('earliestSunrise', {
+                earliestSunrise: responseSunrise,
+                dayLength: data.results.day_length
+              })
             }
           } else {
-            // console.log('stats 2', moment.utc(getTimeForMoment('11:15:15 PM')))
-            stats.set('earliestSunrise', moment.utc(getTimeForMoment('11:15:15 PM')))
+            stats.set('earliestSunrise', {
+              earliestSunrise: moment.utc(getTimeForMoment(data.results.sunrise)),
+              dayLength: data.results.day_length
+            })
           }
         })
       }
