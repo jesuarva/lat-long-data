@@ -57,7 +57,6 @@ export function sunriseSunsetController({ points, stats, latLngList, BATCH_NUMBE
           if (stats.get('earliestSunrise')) {
             const responseSunrise = moment.utc(getTimeForMoment(data.results.sunrise))
             const { earliestSunrise } = stats.get('earliestSunrise')
-            console.log('diff', earliestSunrise.diff(responseSunrise))
             if (earliestSunrise.diff(responseSunrise) > 0) {
               stats.set('earliestSunrise', {
                 earliestSunrise: responseSunrise,

@@ -6,7 +6,6 @@ import { createListOfGeoCoordinates } from './utils'
 const BATCH_NUMBER = 5
 const LIST_OF_GEO_COORDINATES = createListOfGeoCoordinates(9)
 points.init(LIST_OF_GEO_COORDINATES)
-console.log(points)
 
 sunriseSunsetController({
   points,
